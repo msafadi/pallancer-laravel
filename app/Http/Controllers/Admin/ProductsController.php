@@ -4,10 +4,13 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Product;
+use App\ProductImage;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\View;
+use Throwable;
 
 class ProductsController extends Controller
 {
@@ -53,6 +56,7 @@ class ProductsController extends Controller
             'category_id' => 'required|int|exists:categories,id',
             'price' => 'required|numeric|min:0',
             'image' => 'image',
+            'gallery.*' => 'image',
         ]);
 
         $image_path = null;
@@ -63,7 +67,30 @@ class ProductsController extends Controller
 
         $data = $request->all();
         $data['image'] = $image_path;
-        $product = Product::create($data);
+
+        DB::beginTransaction();
+        try {
+            $product = Product::create($data);
+
+            if ($request->hasFile('gallery')) {
+                $images = $request->file('gallery');
+                foreach ($images as $image) {
+                    if ($image->isValid()) {
+                        $image_path = $image->store('products', 'images');
+                        ProductImage::create([
+                            'product_id' => $product->id,
+                            'path' => $image_path,
+                        ]);
+                    }
+                }
+            }
+            DB::commit();
+        } catch (Throwable $e) {
+            DB::rollBack();
+            return redirect()->route('admin.products.index')
+                ->with('alert.error', $e->getMessage());
+            throw $e;
+        }
 
         // redirect()
         return Redirect::route('admin.products.index')
@@ -93,8 +120,10 @@ class ProductsController extends Controller
     public function edit($id)
     {
         $product = Product::findOrFail($id);
+        $gallery = ProductImage::where('product_id', $id)->get();
         return View::make('admin.products.edit', [
-            'product' => $product
+            'product' => $product,
+            'gallery' => $gallery,
         ]);
     }
 
@@ -129,9 +158,21 @@ class ProductsController extends Controller
 
         $product->update($data);
 
+        if ($request->hasFile('gallery')) {
+            $images = $request->file('gallery');
+            foreach ($images as $image) {
+                if ($image->isValid()) {
+                    $image_path = $image->store('products', 'images');
+                    ProductImage::create([
+                        'product_id' => $product->id,
+                        'path' => $image_path,
+                    ]);
+                }
+            }
+        }
+
         return Redirect::route('admin.products.index')
             ->with('alert.success', "Product ({$product->name}) updated!");
-        
     }
 
     /**
@@ -143,11 +184,17 @@ class ProductsController extends Controller
     public function destroy($id)
     {
         $product = Product::findOrFail($id);
+        $images = ProductImage::where('product_id', $id)->get();
+
+        //ProductImage::where('product_id', $id)->delete();
         $product->delete();
 
         if ($product->image) {
             //unlink(public_path('images/' . $product->image));
             Storage::disk('images')->delete($product->image);
+        }
+        foreach ($images as $image) {
+            Storage::disk('images')->delete($image->path);
         }
 
         return Redirect::route('admin.products.index')

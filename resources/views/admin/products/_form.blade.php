@@ -40,4 +40,18 @@
     <p class="text-danger">{{ $message }}</p>
     @enderror
 </div>
+<div class="form-group">
+    <label for="gallery">Gallery Images</label>
+    <input type="file" class="form-control @error('gallery') is-invalid @enderror" name="gallery[]" id="gallery" multiple>
+    <div class="d-flex flex-wrap">
+        @foreach ($gallery as $image)
+        <div class="m-2">
+            <img class="rounded border p-1" src="{{ asset('images/' . $image->path) }}" height="90">
+        </div>
+        @endforeach
+    </div>
+    @error('gallery')
+    <p class="text-danger">{{ $message }}</p>
+    @enderror
+</div>
 <button type="submit" class="btn btn-primary">Save</button>
