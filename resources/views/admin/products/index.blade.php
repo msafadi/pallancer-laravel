@@ -4,11 +4,7 @@
 
 @section('content')
 
-@if (session()->has('alert.success'))
-<div class="alert alert-success">
-  {{ session('alert.success') }}
-</div>
-@endif
+@include('admin._alert')
 
 <div class="d-flex">
   <h1 class="h3 mb-4 text-gray-800">Products</h1>
@@ -33,7 +29,7 @@
   <tbody>
     @foreach ($products as $product)
     <tr>
-      <td><img height="60" src="{{ asset('storage/' . $product->image) }}"></td>
+      <td><img height="60" src="{{ asset('images/' . $product->image) }}"></td>
       <td>{{ $product->id }}</td>
       <td>{{ $product->name }}</td>
       <td>{{ $product->category_name }}</td>

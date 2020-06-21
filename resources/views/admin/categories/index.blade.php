@@ -13,11 +13,7 @@
 
 @section('content')
 
-@if (session()->has('alert.success'))
-<div class="alert alert-success">
-  {{ session('alert.success') }}
-</div>
-@endif
+@include('admin._alert')
 
 <div class="d-flex">
   <h1 class="h3 mb-4 text-gray-800">Categories</h1>

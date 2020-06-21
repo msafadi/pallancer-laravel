@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\View;
 
 class ProductsController extends Controller
@@ -57,12 +58,8 @@ class ProductsController extends Controller
         $image_path = null;
         if ($request->hasFile('image') && $request->file('image')->isValid()) {
             $image = $request->file('image');
-            $image_path = $image->store('products', 'public');
+            $image_path = $image->store('products', 'images');
         }
-        
-        /*$request->merge([
-            'image' => $image_path,
-        ]);*/
 
         $data = $request->all();
         $data['image'] = $image_path;
@@ -118,7 +115,19 @@ class ProductsController extends Controller
             'image' => 'image',
         ]);
 
-        $product->update($request->all());
+        $data = $request->except('image');
+
+        if ($request->hasFile('image') && $request->file('image')->isValid()) {
+            $image = $request->file('image');
+            if ($product->image && Storage::disk('images')->exists($product->image)) {
+                $image_path = $image->storeAs('products', basename($product->image),'images');
+            } else {
+                $image_path = $image->store('products', 'images');
+            }
+            $data['image'] = $image_path;
+        }
+
+        $product->update($data);
 
         return Redirect::route('admin.products.index')
             ->with('alert.success', "Product ({$product->name}) updated!");
@@ -135,6 +144,11 @@ class ProductsController extends Controller
     {
         $product = Product::findOrFail($id);
         $product->delete();
+
+        if ($product->image) {
+            //unlink(public_path('images/' . $product->image));
+            Storage::disk('images')->delete($product->image);
+        }
 
         return Redirect::route('admin.products.index')
             ->with('alert.success', "Product ({$product->name}) deleted!");
