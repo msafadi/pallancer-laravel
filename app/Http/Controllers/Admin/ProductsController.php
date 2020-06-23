@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Product;
 use App\ProductImage;
+use App\Tag;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
@@ -21,12 +22,13 @@ class ProductsController extends Controller
      */
     public function index()
     {
-        $products = Product::join('categories', 'categories.id', '=', 'products.category_id')
+        /*$products = Product::join('categories', 'categories.id', '=', 'products.category_id')
             ->select([
                 'products.*',
                 'categories.name as category_name'
             ])
-            ->paginate();
+            ->paginate();*/
+        $products = Product::with('category')->paginate();
 
         return View::make('admin.products.index', [
             'products' => $products,
@@ -84,6 +86,10 @@ class ProductsController extends Controller
                     }
                 }
             }
+
+            $this->saveTags($product, $request);
+            
+
             DB::commit();
         } catch (Throwable $e) {
             DB::rollBack();
@@ -95,6 +101,24 @@ class ProductsController extends Controller
         // redirect()
         return Redirect::route('admin.products.index')
             ->with('alert.success', "Product ({$product->name}) created!");
+    }
+
+    protected function saveTags($product, $request)
+    {
+        $product_tags = [];
+        $tags = explode(',', $request->post('tags'));
+        foreach ($tags as $tag) {
+            $tag = trim($tag);
+            $tagModle = Tag::firstOrCreate([
+                'name' => $tag,
+            ]);
+            /*DB::table('products_tags')->insert([
+                'product_id' => $product->id,
+                'tag_id' => $tagModle->id,
+            ]);*/
+            $product_tags[] = $tagModle->id;
+        }
+        $product->tags()->sync($product_tags);
     }
 
     /**
@@ -120,6 +144,7 @@ class ProductsController extends Controller
     public function edit($id)
     {
         $product = Product::findOrFail($id);
+
         $gallery = ProductImage::where('product_id', $id)->get();
         return View::make('admin.products.edit', [
             'product' => $product,
@@ -170,6 +195,8 @@ class ProductsController extends Controller
                 }
             }
         }
+
+        $this->saveTags($product, $request);
 
         return Redirect::route('admin.products.index')
             ->with('alert.success', "Product ({$product->name}) updated!");

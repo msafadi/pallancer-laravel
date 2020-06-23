@@ -29,6 +29,28 @@ class Category extends Model
 
     protected $perPage = 10;
 
+    public function products()
+    {
+        return $this->hasMany(
+            Product::class, // Related Model Class name (Product)
+            'category_id' , // Forign key for categories in realated table (products)
+            'id'            // Primary Key for categories (id)
+        );
+    }
+
+    public function children()
+    {
+        return $this->hasMany( Category::class, 'parent_id', 'id');
+    }
+
+    public function parent()
+    {
+        return $this->belongsTo(Category::class, 'parent_id', 'id')
+            ->withDefault([
+                'name' => 'No Parent'
+            ]);
+    }
+
     public static function getValidator($data, $except = 0)
     {
         $rules = [

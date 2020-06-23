@@ -54,4 +54,11 @@
     <p class="text-danger">{{ $message }}</p>
     @enderror
 </div>
+<div class="form-group">
+    <label for="tags">Tags</label>
+    <input type="tags" class="form-control @error('tags') is-invalid @enderror" name="tags" id="tags" value="{{ old('tags', implode(', ', $product->tags->pluck('name')->toArray())) }}">
+    @error('tags')
+    <p class="text-danger">{{ $message }}</p>
+    @enderror
+</div>
 <button type="submit" class="btn btn-primary">Save</button>

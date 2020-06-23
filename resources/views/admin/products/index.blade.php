@@ -32,7 +32,7 @@
       <td><img height="60" src="{{ asset('images/' . $product->image) }}"></td>
       <td>{{ $product->id }}</td>
       <td>{{ $product->name }}</td>
-      <td>{{ $product->category_name }}</td>
+      <td>{{ $product->category->name }}</td>
       <td>{{ $product->price }}</td>
       <td>{{ $product->created_at }}</td>
       <td>

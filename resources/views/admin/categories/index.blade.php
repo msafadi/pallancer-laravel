@@ -30,6 +30,7 @@
       <th>Name</th>
       <th>Parent</th>
       <th>Status</th>
+      <th>Products #</th>
       <th>Created At</th>
       <th></th>
     </tr>
@@ -39,8 +40,9 @@
     <tr>
       <td>{{ $category->id }}</td>
       <td>{{ $category->name }}</td>
-      <td>{{ $category->parent_name }}</td>
+      <td>{{ $category->parent->name }}</td>
       <td>{{ $category->status }}</td>
+      <td>{{ $category->products_count }}</td>
       <td>{{ $category->created_at }}</td>
       <td>
         <div class="d-flex">

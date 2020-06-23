@@ -18,13 +18,26 @@ class CategoriesController extends Controller
     {
         //$categories = Category::all(); // Collection Iteratable
 
-        $categories = Category::leftJoin('categories as parents', 'parents.id', '=', 'categories.parent_id')
+        /*$categories = Category::leftJoin('categories as parents', 'parents.id', '=', 'categories.parent_id')
             ->select([
                 'categories.*',
                 'parents.name as parent_name',
 
             ])
             ->paginate(2);
+        
+        return Category::leftJoin('products', 'products.category_id', '=', 'categories.id')
+                ->select([
+                    'categories.id',
+                    'categories.name',
+                    DB::raw('COUNT(store_products.id) as prodcuts_count')
+                ])
+                ->groupBy([
+                    'categories.id',
+                    'categories.name',
+                ])->get();*/
+        
+        $categories = Category::with('parent')->withCount('products')->paginate();
 
         return view('admin.categories.index', [
             'entries' => $categories,
@@ -33,9 +46,10 @@ class CategoriesController extends Controller
 
     public function show($id)
     {
-        return [
-            'data' => DB::table('categories')->where('id', '=', $id)->first(),
-        ];
+        $category = Category::findOrFail($id);
+        return view('admin.categories.show', [
+            'category' => $category,
+        ]);
     }
 
     public function create()
