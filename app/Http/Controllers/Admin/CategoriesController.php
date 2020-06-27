@@ -109,6 +109,14 @@ class CategoriesController extends Controller
             ->with('alert.success', "Category \"{$category->name}\" deleted!");
     }
 
+    public function products(Category $category)
+    {
+        $request = request();
+        return $category->products()
+            ->with('user.store')
+            ->get();
+    }
+
     protected function checkRequest(Request $request, $except = 0)
     {
         $request->validate([

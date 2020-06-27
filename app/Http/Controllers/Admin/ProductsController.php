@@ -174,7 +174,7 @@ class ProductsController extends Controller
         if ($request->hasFile('image') && $request->file('image')->isValid()) {
             $image = $request->file('image');
             if ($product->image && Storage::disk('images')->exists($product->image)) {
-                $image_path = $image->storeAs('products', basename($product->image),'images');
+                $image_path = $image->storeAs('products', basename($product->image), 'images');
             } else {
                 $image_path = $image->store('products', 'images');
             }

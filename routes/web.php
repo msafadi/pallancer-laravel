@@ -1,6 +1,9 @@
 <?php
 
+use App\Http\Middleware\CheckUserType;
+use App\Product;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,18 +17,29 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('index');
 });
+
+Route::get('comments', function() {
+    return Product::find(3)->comments;
+});
+
+Route::get('stores/{store}', 'StoresController@index');
 
 Route::group([
     'prefix' => 'admin',
     'namespace' => 'Admin',
     'as' => 'admin.',
+    //'middleware' => 'auth:admnin',
+    'middleware' => ['auth', 'checkuser:admin,super-admin'],
 ], function() {
+
+    Route::resource('users', 'UsersController');
+    //Route::get('users/{user}', 'UsersController@show');
 
     Route::resource('products', 'ProductsController');
 
-    Route::prefix('categories')->as('categories.')->group(function() {
+    Route::prefix('categories')->as('categories.')->middleware('auth')->group(function() {
         Route::get('/', 'CategoriesController@index')->name('index');
         Route::get('/create', 'CategoriesController@create')->name('create');
         Route::get('/{id}', 'CategoriesController@show')->name('show');
@@ -33,10 +47,34 @@ Route::group([
         Route::put('/{id}', 'CategoriesController@update')->name('update');
         Route::post('/', 'CategoriesController@store')->name('store');
         Route::delete('/{id}/delete', 'CategoriesController@delete')->name('delete');
-    });
+        
+        Route::get('/{category}/products', 'CategoriesController@products');
+    });    
 
-    
+});
+
+Route::namespace('Admin\Auth')
+    ->prefix('admin')
+    ->name('admin.')
+    ->group(function() {
+
+        Route::get('login', 'LoginController@showLoginForm')->name('login');
+        Route::post('login', 'LoginController@login');
 
 });
 
 
+
+Auth::routes([
+    'register' => true,
+    'verify' => true,
+    'reset' => true,
+]);
+
+Route::get('custom/login', 'Auth\CustomLoginController@showLoginForm')->name('custom-login');
+Route::post('custom/login', 'Auth\CustomLoginController@login');
+
+Route::get('/home', 'HomeController@index')
+    ->name('home')
+    ->middleware('auth')
+    ->middleware('verified');

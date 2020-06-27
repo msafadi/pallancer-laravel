@@ -48,4 +48,12 @@ class Product extends Model
             'id'
         );
     }
+
+    public function comments()
+    {
+        return $this->morphMany(
+            Comment::class,
+            'commentable'
+        );
+    }
 }

@@ -7,9 +7,9 @@ use Illuminate\Support\Facades\App;
 
 class IndexController extends Controller
 {
-    public function index($first = '', $last = '')
+    public function index()
     {
 
-        return 'First: ' . $first . ' - Last: ' . $last;
+        return view('index');
     }
 }
