@@ -8,6 +8,7 @@ use App\ProductImage;
 use App\Tag;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\View;
@@ -143,6 +144,11 @@ class ProductsController extends Controller
      */
     public function edit($id)
     {
+        /*if (!Gate::allows('products.edit')) {
+            abort(403);
+        }*/
+        Gate::authorize('products.edit');
+
         $product = Product::findOrFail($id);
 
         $gallery = ProductImage::where('product_id', $id)->get();
@@ -161,6 +167,10 @@ class ProductsController extends Controller
      */
     public function update(Request $request, $id)
     {
+        if (!Gate::allows('products.edit')) {
+            abort(403);
+        }
+
         $product = Product::findOrFail($id);
         $request->validate([
             'name' => 'required|string|max:255|min:3',
@@ -210,6 +220,10 @@ class ProductsController extends Controller
      */
     public function destroy($id)
     {
+        if (Gate::denies('products.delete')) {
+            abort(403);
+        }
+
         $product = Product::findOrFail($id);
         $images = ProductImage::where('product_id', $id)->get();
 

@@ -37,12 +37,16 @@
       <td>{{ $product->created_at }}</td>
       <td>
         <div class="d-flex">
+          @can('products.edit')
           <a class="btn btn-outline-primary btn-sm mr-1" href="{{ route('admin.products.edit', [$product->id]) }}">Edit</a>
+          @endcan
+          @can('products.delete')
           <form method="post" action="{{ route('admin.products.destroy', [$product->id]) }}">
             @method('delete')
             @csrf
             <button type="submit" class="btn btn-outline-danger btn-sm delete">Delete</button>
           </form>
+          @endcan
         </div>
       </td>
     </tr>
