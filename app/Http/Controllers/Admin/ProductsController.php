@@ -3,10 +3,13 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Policies\ProductPolicy;
 use App\Product;
 use App\ProductImage;
 use App\Tag;
+use Illuminate\Foundation\Auth\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Redirect;
@@ -16,6 +19,10 @@ use Throwable;
 
 class ProductsController extends Controller
 {
+    public function __construct()
+    {
+        $this->authorizeResource(Product::class, 'product');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -23,6 +30,8 @@ class ProductsController extends Controller
      */
     public function index()
     {
+        $this->authorize('viewAny', Product::class);
+
         /*$products = Product::join('categories', 'categories.id', '=', 'products.category_id')
             ->select([
                 'products.*',
@@ -33,6 +42,7 @@ class ProductsController extends Controller
 
         return View::make('admin.products.index', [
             'products' => $products,
+            'locale' => App::getLocale(),
         ]); // view()
     }
 
@@ -128,9 +138,9 @@ class ProductsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Product $product)
     {
-        $product = Product::findOrFail($id);
+        //$product = Product::findOrFail($id);
         return View::make('admin.products.show', [
             'product' => $product
         ]);
@@ -142,16 +152,16 @@ class ProductsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Product $product)
     {
         /*if (!Gate::allows('products.edit')) {
             abort(403);
         }*/
-        Gate::authorize('products.edit');
+        //Gate::authorize('products.edit');
+        //$product = Product::findOrFail($id);
+        $this->authorize('update', $product);
 
-        $product = Product::findOrFail($id);
-
-        $gallery = ProductImage::where('product_id', $id)->get();
+        $gallery = ProductImage::where('product_id',$product->id)->get();
         return View::make('admin.products.edit', [
             'product' => $product,
             'gallery' => $gallery,
@@ -165,13 +175,13 @@ class ProductsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Product $product)
     {
-        if (!Gate::allows('products.edit')) {
+        /*if (!Gate::allows('products.edit')) {
             abort(403);
-        }
+        }*/
 
-        $product = Product::findOrFail($id);
+        //$product = Product::findOrFail($id);
         $request->validate([
             'name' => 'required|string|max:255|min:3',
             'category_id' => 'required|int|exists:categories,id',
@@ -209,7 +219,7 @@ class ProductsController extends Controller
         $this->saveTags($product, $request);
 
         return Redirect::route('admin.products.index')
-            ->with('alert.success', "Product ({$product->name}) updated!");
+            ->with('alert.success', __("Product (:product) updated!", ['product' => $product->name]));
     }
 
     /**
@@ -218,14 +228,19 @@ class ProductsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Product $product)
     {
-        if (Gate::denies('products.delete')) {
-            abort(403);
-        }
+        //$product = Product::findOrFail($id);
+        Gate::authorize('products.delete', $product);
 
-        $product = Product::findOrFail($id);
-        $images = ProductImage::where('product_id', $id)->get();
+        /*$response = Gate::inspect('products.delete', $product);
+
+        if (!$response->allowed()) {
+            abort(403, $response->message());
+        }*/
+
+        
+        $images = ProductImage::where('product_id', $product->id)->get();
 
         //ProductImage::where('product_id', $id)->delete();
         $product->delete();

@@ -7,7 +7,7 @@
 @include('admin._alert')
 
 <div class="d-flex">
-  <h1 class="h3 mb-4 text-gray-800">Products</h1>
+  <h1 class="h3 mb-4 text-gray-800">@lang('Products') {{ $locale }}</h1>
   <div class="ml-auto">
     <a href="{{ route('admin.products.create') }}" class="btn btn-sm btn-outline-success">Create new</a>
   </div>
@@ -37,10 +37,10 @@
       <td>{{ $product->created_at }}</td>
       <td>
         <div class="d-flex">
-          @can('products.edit')
+          @can('update', $product)
           <a class="btn btn-outline-primary btn-sm mr-1" href="{{ route('admin.products.edit', [$product->id]) }}">Edit</a>
           @endcan
-          @can('products.delete')
+          @can('products.delete', $product)
           <form method="post" action="{{ route('admin.products.destroy', [$product->id]) }}">
             @method('delete')
             @csrf

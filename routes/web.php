@@ -16,9 +16,7 @@ use Illuminate\Support\Facades\Auth;
 |
 */
 
-Route::get('/', function () {
-    return view('index');
-});
+
 
 Route::get('comments', function() {
     return Product::find(3)->comments;
@@ -65,11 +63,7 @@ Route::namespace('Admin\Auth')
 
 
 
-Auth::routes([
-    'register' => true,
-    'verify' => true,
-    'reset' => true,
-]);
+
 
 Route::get('custom/login', 'Auth\CustomLoginController@showLoginForm')->name('custom-login');
 Route::post('custom/login', 'Auth\CustomLoginController@login');
@@ -78,3 +72,15 @@ Route::get('/home', 'HomeController@index')
     ->name('home')
     ->middleware('auth')
     ->middleware('verified');
+
+Route::get('/', 'IndexController@index')->name('frontpage');
+Route::prefix('{locale}')->where([
+        'locale' => '[a-z]{2}',
+    ])->group(function() {
+    Route::get('/', 'IndexController@index')->name('frontpage.locale');
+    Auth::routes([
+        'register' => true,
+        'verify' => true,
+        'reset' => true,
+    ]);
+});

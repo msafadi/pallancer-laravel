@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\CssSelector\Node\FunctionNode;
 
@@ -54,11 +55,14 @@ class CategoriesController extends Controller
 
     public function create()
     {
+        Gate::authorize('categories.create');
+
         return view('admin.categories.create');
     }
 
     public function store(Request $request)
     {
+        Gate::authorize('categories.create');
         $this->checkRequest($request);
 
         $category = Category::create([

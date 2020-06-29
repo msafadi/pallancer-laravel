@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
 use GuzzleHttp\Psr7\Request;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
@@ -46,12 +47,7 @@ class LoginController extends Controller
 
     public function redirectTo()
     {
-        $user = $this->guard()->user();
-        if ($user->type != 'user') {
-            return '/admin/categories';
-        }
-
-        return RouteServiceProvider::HOME;
+        return route('frontpage');
     }
 
     public function username()
@@ -66,7 +62,7 @@ class LoginController extends Controller
 
     protected function loggedOut($request)
     {
-        return redirect('/');
+        return redirect($this->redirectTo());
     }
 
     /*public function login(Request $request)
