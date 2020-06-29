@@ -42,7 +42,7 @@ class LoginController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('guest')->except('logout');
+        $this->middleware('guest')->except(['logout', 'signout']);
     }
 
     public function redirectTo()
@@ -65,8 +65,12 @@ class LoginController extends Controller
         return redirect($this->redirectTo());
     }
 
-    /*public function login(Request $request)
+    public function signout()
     {
-
-    }*/
+        //$request = request();
+        $this->guard()->logout();
+        //$request->session()->invalidate();
+        //$request->session()->regenerateToken();
+        return redirect($this->redirectTo());
+    }
 }

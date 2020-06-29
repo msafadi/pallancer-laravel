@@ -83,4 +83,5 @@ Route::prefix('{locale}')->where([
         'verify' => true,
         'reset' => true,
     ]);
+    Route::get('signout', 'Auth\LoginController@signout')->name('signout');
 });
