@@ -40,6 +40,9 @@ class ProductsController extends Controller
             ->paginate();*/
         $products = Product::with('category')->paginate();
 
+        $cart = request()->cookie('cart');
+        dd($cart);
+
         return View::make('admin.products.index', [
             'products' => $products,
             'locale' => App::getLocale(),
@@ -80,6 +83,8 @@ class ProductsController extends Controller
 
         $data = $request->all();
         $data['image'] = $image_path;
+
+        //$data['description'] = strip_tags($data['description'], '<p><h1><h2>');
 
         DB::beginTransaction();
         try {

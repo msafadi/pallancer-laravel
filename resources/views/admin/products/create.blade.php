@@ -9,5 +9,5 @@
         'gallery' => [],
     ])
 </form>
-
 @endsection
+

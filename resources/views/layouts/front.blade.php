@@ -66,8 +66,8 @@
                             </div>
                             <div class="btn-group ps-dropdown"><a class="dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Language<i class="fa fa-angle-down"></i></a>
                                 <ul class="dropdown-menu">
-                                    <li><a href="{{ route(Route::getCurrentRoute()->getName(), ['locale' => 'en']) }}">English</a></li>
-                                    <li><a href="{{ route(Route::getCurrentRoute()->getName(), ['locale' => 'ar']) }}">العريية</a></li>
+                                    <li><a href="/en">English</a></li>
+                                    <li><a href="/ar">العريية</a></li>
                                 </ul>
                             </div>
                         </div>

@@ -17,9 +17,10 @@
 <table class="table">
   <thead>
     <tr>
-      <th>Image</th>
+      <th>Image </th>
       <th>ID</th>
       <th>Name</th>
+      <th>Description</th>
       <th>Category</th>
       <th>Price</th>
       <th>Created At</th>
@@ -32,6 +33,7 @@
       <td><img height="60" src="{{ asset('images/' . $product->image) }}"></td>
       <td>{{ $product->id }}</td>
       <td>{{ $product->name }}</td>
+      <td>{!! $product->description !!}</td>
       <td>{{ $product->category->name }}</td>
       <td>{{ $product->price }}</td>
       <td>{{ $product->created_at }}</td>

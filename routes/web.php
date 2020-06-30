@@ -4,6 +4,7 @@ use App\Http\Middleware\CheckUserType;
 use App\Product;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cookie;
 
 /*
 |--------------------------------------------------------------------------
@@ -84,4 +85,6 @@ Route::prefix('{locale}')->where([
         'reset' => true,
     ]);
     Route::get('signout', 'Auth\LoginController@signout')->name('signout');
+
+    Route::get('products/{product}', 'ProductsController@show')->name('products.show');
 });

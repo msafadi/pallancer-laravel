@@ -8,13 +8,18 @@
     @enderror
 </div>
 <div class="form-group">
+    <label for="description">{{ __('Description') }}</label>
+    <textarea rows="5" class="form-control @error('description') is-invalid @enderror" name="description" id="description">{{ old('description', $product->description) }}</textarea>
+    @error('description')
+    <p class="text-danger">{{ $message }}</p>
+    @enderror
+</div>
+<div class="form-group">
     <label for="category_id">Category</label>
     <select name="category_id" class="form-control @error('category_id') is-invalid @enderror">
         <option value="">Select Category</option>
         @foreach (App\Category::all() as $category)
-
         <option @if($category->id == old('category_id', $product->category_id)) selected @endif value="{{ $category->id }}">{{ $category->name }}</option>
-
         @endforeach
     </select>
     @error('category_id')
@@ -62,3 +67,16 @@
     @enderror
 </div>
 <button type="submit" class="btn btn-primary">Save</button>
+
+@push('js')
+<script src="{{ asset('js/trumbowyg/trumbowyg.min.js') }}"></script>
+@endpush
+@push('js')
+<script>
+    $('#description').trumbowyg();
+</script>
+@endpush
+
+@push('css')
+<link rel="stylesheet" href="{{ asset('js/trumbowyg/ui/trumbowyg.min.css') }}">
+@endpush
