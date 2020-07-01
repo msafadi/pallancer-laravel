@@ -52,7 +52,7 @@
                             <div class="ps-shoe mb-30">
                                 <div class="ps-shoe__thumbnail">
                                     <div class="ps-badge"><span>New</span></div>
-                                    <div class="ps-badge ps-badge--sale ps-badge--2nd"><span>-35%</span></div><a class="ps-shoe__favorite" href="#"><i class="ps-icon-heart"></i></a><img src="{{ asset('images/' . $product->image) }}" alt=""><a class="ps-shoe__overlay" href="product-detail.html"></a>
+                                    <div class="ps-badge ps-badge--sale ps-badge--2nd"><span>-35%</span></div><a class="ps-shoe__favorite" href="#"><i class="ps-icon-heart"></i></a><img src="{{ asset('images/' . $product->image) }}" alt=""><a class="ps-shoe__overlay" href="{{ route('products.show', [$product->id]) }}"></a>
                                 </div>
                                 <div class="ps-shoe__content">
                                     <div class="ps-shoe__variants">
@@ -66,9 +66,9 @@
                                             <option value="2">5</option>
                                         </select>
                                     </div>
-                                    <div class="ps-shoe__detail"><a class="ps-shoe__name" href="#">Air Jordan 7 Retro</a>
-                                        <p class="ps-shoe__categories"><a href="#">Men shoes</a>,<a href="#"> Nike</a>,<a href="#"> Jordan</a></p><span class="ps-shoe__price">
-                                            <del>£220</del> £ 120</span>
+                                    <div class="ps-shoe__detail"><a class="ps-shoe__name" href="#">{{ $product->name }}</a>
+                                        <p class="ps-shoe__categories"><a href="#">{{ $product->category->name }}</a></p><span class="ps-shoe__price">
+                                            <del>{{ $product->price }}</del> {{ $product->price }}</span>
                                     </div>
                                 </div>
                             </div>
@@ -150,7 +150,7 @@
                 <div class="ps-shoes--carousel">
                     <div class="ps-shoe">
                         <div class="ps-shoe__thumbnail">
-                            <div class="ps-badge"><span>New</span></div><a class="ps-shoe__favorite" href="#"><i class="ps-icon-heart"></i></a><img src="{{ asset('images/' . $product->image) }}" alt=""><a class="ps-shoe__overlay" href="product-detail.html"></a>
+                            <div class="ps-badge"><span>New</span></div><a class="ps-shoe__favorite" href="#"><i class="ps-icon-heart"></i></a><img src="{{ asset('images/' . $product->image) }}" alt=""><a class="ps-shoe__overlay" href="{{ route('products.show', [$product->id]) }}"></a>
                         </div>
                         <div class="ps-shoe__content">
                             <div class="ps-shoe__variants">
@@ -163,8 +163,8 @@
                                     <option value="2">5</option>
                                 </select>
                             </div>
-                            <div class="ps-shoe__detail"><a class="ps-shoe__name" href="product-detai.html">{{ $product->name }}</a>
-                                <p class="ps-shoe__categories"><a href="#">Men shoes</a>,<a href="#"> Nike</a>,<a href="#"> Jordan</a></p><span class="ps-shoe__price"> £ 120</span>
+                            <div class="ps-shoe__detail"><a class="ps-shoe__name" href="{{ route('products.show', [$product->id]) }}">{{ $product->name }}</a>
+                                <p class="ps-shoe__categories"><a href="#">{{ $product->category->name }}</a></p><span class="ps-shoe__price"> {{ $product->price }}</span>
                             </div>
                         </div>
                     </div>

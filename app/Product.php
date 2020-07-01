@@ -56,4 +56,11 @@ class Product extends Model
             'commentable'
         );
     }
+
+    public function orders()
+    {
+        return $this->belongsToMany(Order::class, 'order_products')
+            ->using(OrderProduct::class);
+    }
+
 }

@@ -88,3 +88,11 @@ Route::prefix('{locale}')->where([
 
     Route::get('products/{product}', 'ProductsController@show')->name('products.show');
 });
+
+Route::get('cart', 'CartController@index')->name('cart');
+Route::post('cart', 'CartController@store');
+
+Route::get('checkout', 'CheckoutController@index')->name('checkout');
+Route::post('checkout', 'CheckoutController@checkout');
+
+Route::get('orders', 'OrdersController@index')->name('orders');

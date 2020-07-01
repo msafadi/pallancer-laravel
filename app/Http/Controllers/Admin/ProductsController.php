@@ -41,7 +41,6 @@ class ProductsController extends Controller
         $products = Product::with('category')->paginate();
 
         $cart = request()->cookie('cart');
-        dd($cart);
 
         return View::make('admin.products.index', [
             'products' => $products,
