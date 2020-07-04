@@ -10,6 +10,7 @@ use App\Tag;
 use Illuminate\Foundation\Auth\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Redirect;
@@ -82,6 +83,7 @@ class ProductsController extends Controller
 
         $data = $request->all();
         $data['image'] = $image_path;
+        $data['user_id'] = Auth::id();
 
         //$data['description'] = strip_tags($data['description'], '<p><h1><h2>');
 

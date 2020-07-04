@@ -96,3 +96,6 @@ Route::get('checkout', 'CheckoutController@index')->name('checkout');
 Route::post('checkout', 'CheckoutController@checkout');
 
 Route::get('orders', 'OrdersController@index')->name('orders');
+
+Route::get('paypal/return', 'CheckoutController@paypalReturn')->name('paypal.return');
+Route::get('paypal/cancel', 'CheckoutController@paypalCancel')->name('paypal.cancel');
