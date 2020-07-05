@@ -16,7 +16,8 @@
         "laravel/framework": "^7.0",
         "laravel/tinker": "^2.0",
         "laravel/ui": "^2.0",
-        "paypal/paypal-checkout-sdk": "1.0.1"
+        "paypal/paypal-checkout-sdk": "1.0.1",
+        "pusher/pusher-php-server": "~4.0"
     },
     "require-dev": {
         "facade/ignition": "^2.0",

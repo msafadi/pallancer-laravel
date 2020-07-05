@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Cart;
+use App\Events\OrderCompleted;
+use App\Events\OrderCreated;
 use App\Order;
 use App\OrderProduct;
 use Illuminate\Http\Request;
@@ -17,6 +19,11 @@ use PayPalCheckoutSdk\Orders\OrdersCaptureRequest;
 
 class CheckoutController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+    
     public function index()
     {
         $cart = Cart::with('product')->where('user_id', Auth::id())->get();
@@ -60,11 +67,13 @@ class CheckoutController extends Controller
 
             DB::commit();
 
-            return $this->paypal($order, $total);
+            event(new OrderCreated($order)); // Trigger for event OrderCreated
+
+            //return $this->paypal($order, $total);
 
             return redirect()
-                ->route('orders')
-                ->with('success', __('Order #:id created', ['id' => $order->id]));
+                    ->route('orders')
+                    ->with('success', __('Order #:id created and completed', ['id' => $order->id]));
 
         } catch (Throwable $e) {
             DB::rollBack();
@@ -139,6 +148,8 @@ class CheckoutController extends Controller
 
                     session()->forget(['order_id', 'paypal_order_id']);
                     
+                    event(new OrderCompleted());
+
                     return redirect()
                         ->route('orders')
                         ->with('success', __('Order #:id created and completed', ['id' => $order->id]));

@@ -15,6 +15,7 @@
     <meta name="author" content="Nghia Minh Luong">
     <meta name="keywords" content="Default Description">
     <meta name="description" content="Default keyword">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ config('app.name') }}</title>
     <!-- Fonts-->
     <link href="https://fonts.googleapis.com/css?family=Archivo+Narrow:300,400,700%7CMontserrat:300,400,500,600,700,800,900" rel="stylesheet">
@@ -343,6 +344,11 @@
     <script type="text/javascript" src="{{ asset('front-assets/plugins/revolution/js/extensions/revolution.extension.actions.min.js') }}"></script>
     <!-- Custom scripts-->
     <script type="text/javascript" src="{{ asset('front-assets/js/main.js') }}"></script>
+
+    <script>
+        var userId = "{{ Auth::id() }}";
+    </script>
+    <script src="{{ asset('js/app.js') }}"></script>
 </body>
 
 </html>
