@@ -36,6 +36,9 @@ Route::group([
     Route::resource('users', 'UsersController');
     //Route::get('users/{user}', 'UsersController@show');
 
+    Route::get('products/trash', 'ProductsController@trash');
+    Route::put('products/{id}/restore', 'ProductsController@restore')->name('products.restore');
+    Route::delete('products/{id}/force-delete', 'ProductsController@forceDelete')->name('products.forceDelete');
     Route::resource('products', 'ProductsController');
 
     Route::prefix('categories')->as('categories.')->middleware('auth')->group(function() {

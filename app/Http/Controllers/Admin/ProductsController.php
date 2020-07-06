@@ -246,13 +246,47 @@ class ProductsController extends Controller
         }*/
 
         
-        $images = ProductImage::where('product_id', $product->id)->get();
+        //$images = ProductImage::where('product_id', $product->id)->get();
 
         //ProductImage::where('product_id', $id)->delete();
         $product->delete();
 
-        if ($product->image) {
+        /*if ($product->image) {
             //unlink(public_path('images/' . $product->image));
+            Storage::disk('images')->delete($product->image);
+        }
+        foreach ($images as $image) {
+            Storage::disk('images')->delete($image->path);
+        }*/
+
+        return Redirect::route('admin.products.index')
+            ->with('alert.success', "Product ({$product->name}) deleted!");
+    }
+
+    public function trash()
+    {
+        return view('admin.products.trash', [
+            'products' => Product::onlyTrashed()->paginate(),
+        ]);
+    }
+
+    public function restore(Request $request, $id)
+    {
+        $product = Product::onlyTrashed()->findOrFail($id);
+        $product->restore();
+        return Redirect::route('admin.products.index')
+            ->with('alert.success', "Product ({$product->name}) restored!");
+    }
+
+    public function forceDelete($id)
+    {
+        $product = Product::withTrashed()->findOrFail($id);
+        
+        $images = $product->images; //ProductImage::where('product_id', $product->id)->get();
+
+        $product->forceDelete();
+
+        if ($product->image) {
             Storage::disk('images')->delete($product->image);
         }
         foreach ($images as $image) {
@@ -260,6 +294,7 @@ class ProductsController extends Controller
         }
 
         return Redirect::route('admin.products.index')
-            ->with('alert.success', "Product ({$product->name}) deleted!");
+            ->with('alert.success', "Product ({$product->name}) deleted completely!");
     }
+
 }

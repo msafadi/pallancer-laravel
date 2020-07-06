@@ -3,12 +3,30 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Product extends Model
 {
+    use SoftDeletes;
+
     protected $fillable = [
         'name', 'category_id', 'price', 'image', 'description', 'user_id'
     ];
+
+    protected $appends = [
+        'image_url'
+    ];
+
+    protected $hidden = [
+        'created_at', 'updated_at'
+    ];
+
+    public function getImageUrlAttribute()
+    {
+        if ($this->attributes['image']) {
+            return asset('images/' . $this->attributes['image']);
+        }
+    }
 
     public function category()
     {
