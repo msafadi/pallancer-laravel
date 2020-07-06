@@ -89,6 +89,9 @@ Route::prefix('{locale}')->where([
     Route::get('products/{product}', 'ProductsController@show')->name('products.show');
 });
 
+Route::get('notifications', 'NotificationsController@index');
+Route::get('notifications/{id}', 'NotificationsController@read')->name('notification.read');
+
 Route::get('cart', 'CartController@index')->name('cart');
 Route::post('cart', 'CartController@store');
 

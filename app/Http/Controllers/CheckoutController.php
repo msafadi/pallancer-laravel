@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use App\Cart;
 use App\Events\OrderCompleted;
 use App\Events\OrderCreated;
+use App\Notifications\OrderCreatedNotification;
 use App\Order;
 use App\OrderProduct;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 
@@ -64,8 +66,11 @@ class CheckoutController extends Controller
 
             //Cart::where('user_id', Auth::id())->delete();
             $user->cart()->delete();
+            Cookie::queue(Cookie::make('cart_id', '', -60));
 
             DB::commit();
+
+            $user->notify(new OrderCreatedNotification($order));
 
             event(new OrderCreated($order)); // Trigger for event OrderCreated
 

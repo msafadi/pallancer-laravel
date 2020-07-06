@@ -4,6 +4,7 @@ namespace App\Listeners;
 
 use App\Events\OrderCreated;
 use App\Mail\OrderCreatedEmail;
+use App\Notifications\OrderCreatedNotification;
 use App\User;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
@@ -29,11 +30,14 @@ class SendOrderCreatedEmail
      */
     public function handle(OrderCreated $event)
     {
+        $user = User::where('type', 'super-admin')->first();
+        $user->notify(new OrderCreatedNotification($event->order));
+        
         $order = $event->order;
         $name = $order->user->name;
         $order_id = $order->id;
         $action = url(route('orders'));
-        $email = User::where('type', 'super-admin')->first()->email;
+        $email = $user->email;
         Mail::send(new OrderCreatedEmail($email, $name, $order_id, $action));
     }
 }

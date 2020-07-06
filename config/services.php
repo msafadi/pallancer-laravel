@@ -34,5 +34,15 @@ return [
         'client_id' => env('PAYPAL_CLIENT_ID', ''),
         'client_secret' => env('PAYPAL_CLIENT_SECRET', ''),
         'mode' => env('PAYPAL_MODE', 'sandbox'),
+    ],
+
+    'nexmo' => [
+        'sms_from' => env('APP_NAME', 'Vonage APIs'),
+    ],
+
+    'hotsms' => [
+        'username' => 'test',
+        'password' => 'tets',
+        'sender' => env('APP_NAME'),
     ]
 ];
