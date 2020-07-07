@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 
 class Product extends Model
 {
@@ -78,7 +79,56 @@ class Product extends Model
     public function orders()
     {
         return $this->belongsToMany(Order::class, 'order_products')
-            ->using(OrderProduct::class);
+            ->using(OrderProduct::class)
+            ->withPivot([
+                'quantity', 'price'
+            ]);
+    }
+
+    public function orderedProducts()
+    {
+        return $this->hasMany(OrderProduct::class);
+    }
+
+    public static function getBestSales($limit = 10)
+    {
+        /*
+SELECT store_products.id, store_products.name, 
+(SELECT SUM(store_order_products.quantity) FROM store_order_products WHERE store_order_products.product_id = store_products.id) as sales
+FROM store_products
+ORDER BY sales DESC
+LIMIT 3;
+        */
+        return Product::select([
+            'id', 
+            'name',
+            'price',
+            'image',
+            DB::raw('(SELECT SUM(store_order_products.quantity) FROM store_order_products WHERE store_order_products.product_id = store_products.id) as sales'),
+        ])
+        ->selectRaw('(SELECT store_categories.name FROM store_categories WHERE store_categories.id = store_products.category_id) as category_name')
+        ->orderBy('sales', 'DESC')
+        ->limit($limit)
+        ->get();
+    }
+
+    public function scopeHighPrice($query, $min, $max = null)
+    {
+        $query->where('price', '>=', $min);
+        if ($max !== null) {
+            $query->where('price', '<=', $max);
+        }
+        return $query;
+    }
+
+    protected static function booted()
+    {
+        //parent::booted();
+
+        /*static::addGlobalScope('ordered', function($query) {
+            $query->has('orders');
+        });*/
+        
     }
 
 }

@@ -146,7 +146,7 @@
         </div>
         <div class="ps-section__content">
             <div class="ps-owl--colection owl-slider" data-owl-auto="true" data-owl-loop="true" data-owl-speed="5000" data-owl-gap="30" data-owl-nav="false" data-owl-dots="false" data-owl-item="4" data-owl-item-xs="1" data-owl-item-sm="2" data-owl-item-md="3" data-owl-item-lg="4" data-owl-duration="1000" data-owl-mousedrag="on">
-                @foreach($products as $product)
+                @foreach($best_sales as $product)
                 <div class="ps-shoes--carousel">
                     <div class="ps-shoe">
                         <div class="ps-shoe__thumbnail">
@@ -164,7 +164,7 @@
                                 </select>
                             </div>
                             <div class="ps-shoe__detail"><a class="ps-shoe__name" href="{{ route('products.show', [$product->id]) }}">{{ $product->name }}</a>
-                                <p class="ps-shoe__categories"><a href="#">{{ $product->category->name }}</a></p><span class="ps-shoe__price"> {{ $product->price }}</span>
+                                <p class="ps-shoe__categories"><a href="#">{{ $product->category_name }}</a></p><span class="ps-shoe__price"> {{ $product->price }}</span>
                             </div>
                         </div>
                     </div>

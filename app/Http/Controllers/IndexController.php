@@ -13,6 +13,8 @@ class IndexController extends Controller
         $products = Product::latest()->get();
         return view('index', [
             'products' => $products,
+            'best_sales' => Product::getBestSales(10),
+            //'best_sales' => Product::highPrice(100)->get(),
         ]);
     }
 }

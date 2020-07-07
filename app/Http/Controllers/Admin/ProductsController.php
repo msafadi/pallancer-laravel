@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ProductRequest;
 use App\Policies\ProductPolicy;
 use App\Product;
 use App\ProductImage;
@@ -39,7 +40,7 @@ class ProductsController extends Controller
                 'categories.name as category_name'
             ])
             ->paginate();*/
-        $products = Product::with('category')->paginate();
+        $products = Product::with('category')->withoutGlobalScope('ordered')->paginate();
 
         $cart = request()->cookie('cart');
 
@@ -65,15 +66,17 @@ class ProductsController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(ProductRequest $request)
     {
-        $request->validate([
+        /*$request->validate([
             'name' => 'required|string|max:255|min:3',
             'category_id' => 'required|int|exists:categories,id',
             'price' => 'required|numeric|min:0',
             'image' => 'image',
             'gallery.*' => 'image',
         ]);
+        */
+        //$this->authorize('create', Product::class);
 
         $image_path = null;
         if ($request->hasFile('image') && $request->file('image')->isValid()) {
@@ -158,8 +161,9 @@ class ProductsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit(Product $product)
+    public function edit($id)
     {
+        $product = Product::withoutGlobalScope('ordered')->find($id);
         /*if (!Gate::allows('products.edit')) {
             abort(403);
         }*/
