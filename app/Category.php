@@ -3,7 +3,9 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Validator;
+use Throwable;
 
 class Category extends Model
 {
@@ -24,6 +26,30 @@ class Category extends Model
     protected $fillable = [
         'name', 'parent_id', 'status',
     ];
+
+    protected static function booted()
+    {
+        static::saving(function($model) {
+            $model->name = Crypt::encrypt($model->name);
+        });
+
+        /*static::retrieved(function($model) {
+            try {
+                $model->name = Crypt::decrypt($model->name);
+            } catch(Throwable $e) {
+                
+            }
+        });*/
+    }
+
+    public function getNameAttribute()
+    {
+        try {
+            return Crypt::decrypt($this->attributes['name']);
+        } catch(Throwable $e) {
+            return $this->attributes['name'];
+        }
+    }
 
     public $timestamps = true;
 

