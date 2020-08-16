@@ -1,10 +1,11 @@
 {
-    "name": "laravel/laravel",
+    "name": "msafadi/pallancer-laravel",
     "type": "project",
-    "description": "The Laravel Framework.",
+    "description": "Online store example",
     "keywords": [
         "framework",
-        "laravel"
+        "laravel",
+        "ecommerce"
     ],
     "license": "MIT",
     "require": {
