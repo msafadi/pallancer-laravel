@@ -38,7 +38,7 @@ class CategoriesController extends Controller
                     'categories.name',
                 ])->get();*/
         
-        $categories = Category::with('parent')->withCount('products')->paginate();
+        $categories = Category::with('parent')->withCount('products')->paginate(2);
 
         return view('admin.categories.index', [
             'entries' => $categories,

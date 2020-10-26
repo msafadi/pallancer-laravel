@@ -36,7 +36,8 @@ class AppServiceProvider extends ServiceProvider
             'locale' => config('app.locale'),
         ]);
         
-        Paginator::defaultView('vendor.pagination.bootstrap-4');
-        Paginator::defaultSimpleView('vendor.pagination.simple-bootstrap-4');
+        Paginator::useBootstrap();
+        //Paginator::defaultView('vendor.pagination.bootstrap-4');
+        //Paginator::defaultSimpleView('vendor.pagination.simple-bootstrap-4');
     }
 }

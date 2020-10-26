@@ -45,7 +45,7 @@ Route::group([
     Route::resource('products', 'ProductsController');
 
     Route::prefix('categories')->as('categories.')->middleware('auth')->group(function() {
-        Route::get('/', 'CategoriesController@index')->name('index');
+        Route::get('/', [App\Http\Controllers\Admin\CategoriesController::class, 'index'])->name('index');
         Route::get('/create', 'CategoriesController@create')->name('create');
         Route::get('/{id}', 'CategoriesController@show')->name('show');
         Route::get('/{id}/edit', 'CategoriesController@edit')->name('edit')->middleware('can:categories.edit');
@@ -85,11 +85,11 @@ Route::prefix('{locale}')->where([
         'locale' => '[a-z]{2}',
     ])->group(function() {
     Route::get('/', 'IndexController@index')->name('frontpage.locale');
-    Auth::routes([
+    /*Auth::routes([
         'register' => true,
         'verify' => true,
         'reset' => true,
-    ]);
+    ]);*/
     Route::get('signout', 'Auth\LoginController@signout')->name('signout');
 
     Route::get('products/{product}', 'ProductsController@show')->name('products.show');
@@ -128,3 +128,6 @@ Route::get('reset-admin', function() {
 
     
 });
+Route::middleware(['auth:sanctum'])->get('/dashboard', function () {
+    return view('dashboard');
+})->name('dashboard');
